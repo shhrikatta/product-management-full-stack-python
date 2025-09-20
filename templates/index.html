@@ -17,10 +17,15 @@
                     <p>Manage your product inventory with ease</p>
                 </div>
                 <div class="header-controls">
-                    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light theme">
-                        <i class="fas fa-moon" id="theme-icon"></i>
-                        <span class="theme-label" id="theme-label">Dark</span>
-                    </button>
+                    <div class="theme-switch-container" title="Toggle dark/light theme">
+                        <label class="theme-switch" for="theme-checkbox">
+                            <input type="checkbox" id="theme-checkbox" onchange="toggleTheme()">
+                            <span class="theme-slider">
+                                <i class="fas fa-sun theme-icon-sun"></i>
+                                <i class="fas fa-moon theme-icon-moon"></i>
+                            </span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </header>

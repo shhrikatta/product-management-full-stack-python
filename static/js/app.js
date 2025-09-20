@@ -520,18 +520,19 @@ class ThemeManager {
     }
 
     updateThemeToggle() {
-        const themeIcon = document.getElementById('theme-icon');
-        const themeLabel = document.getElementById('theme-label');
-        const themeToggle = document.getElementById('theme-toggle');
+        const themeCheckbox = document.getElementById('theme-checkbox');
+        const themeSwitchContainer = document.querySelector('.theme-switch-container');
         
-        if (this.currentTheme === 'dark') {
-            themeIcon.className = 'fas fa-sun';
-            themeLabel.textContent = 'Light';
-            themeToggle.title = 'Switch to light theme';
-        } else {
-            themeIcon.className = 'fas fa-moon';
-            themeLabel.textContent = 'Dark';
-            themeToggle.title = 'Switch to dark theme';
+        if (themeCheckbox && themeSwitchContainer) {
+            // Set checkbox state (checked = dark theme)
+            themeCheckbox.checked = this.currentTheme === 'dark';
+            
+            // Update tooltip
+            if (this.currentTheme === 'dark') {
+                themeSwitchContainer.title = 'Switch to light theme';
+            } else {
+                themeSwitchContainer.title = 'Switch to dark theme';
+            }
         }
     }
 
