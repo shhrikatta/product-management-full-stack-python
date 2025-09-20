@@ -10,6 +10,8 @@ The Products API is built using Flask, Flask-CORS, and PyMongo, providing a robu
 
 - ✅ **Full CRUD Operations**: Create, Read, Update, and Delete products
 - ✅ **MongoDB Integration**: Persistent storage with MongoDB database
+- ✅ **Modern Web UI**: Beautiful, responsive web interface for product management
+- ✅ **Dark/Light Theme**: Toggle between dark and light themes with system preference detection
 - ✅ **Flexible ID Support**: Works with both MongoDB ObjectIds and custom integer IDs
 - ✅ **RESTful Design**: Clean, intuitive API endpoints
 - ✅ **Data Validation**: Comprehensive input validation and error handling
@@ -19,6 +21,8 @@ The Products API is built using Flask, Flask-CORS, and PyMongo, providing a robu
 - ✅ **Error Handling**: Proper HTTP status codes and error messages
 - ✅ **Environment Configuration**: Configurable via environment variables
 - ✅ **Connection Resilience**: Graceful handling of database connection issues
+- ✅ **Real-time Search**: Instant product search and filtering
+- ✅ **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 
 ## Installation
 
@@ -80,6 +84,39 @@ python products.py
 The server will start on `http://0.0.0.0:5001` with debug mode enabled.
 
 **Note**: The API will automatically create the database and collection if they don't exist.
+
+## Web UI Features
+
+The application includes a modern, responsive web interface accessible at the root URL (`http://localhost:5001`). The UI provides:
+
+### 🎨 Theme Support
+- **Dark Theme**: Professional dark mode for comfortable viewing in low-light environments
+- **Light Theme**: Clean, bright theme for daytime use
+- **Automatic Detection**: Respects system theme preference by default
+- **Manual Toggle**: Easy one-click theme switching with persistent storage
+- **Smooth Transitions**: Seamless animations when switching themes
+
+### 📏 Product Management
+- **Add Products**: Intuitive form with real-time validation
+- **View Products**: Card-based layout with all product details
+- **Edit Products**: In-place editing with modal dialogs
+- **Delete Products**: Safe deletion with confirmation prompts
+- **Search & Filter**: Real-time search by product name
+
+### 📱 User Experience
+- **Responsive Design**: Optimized for all screen sizes (mobile, tablet, desktop)
+- **Keyboard Shortcuts**: ESC to close modals, Enter to submit forms
+- **Loading States**: Visual feedback during API operations
+- **Error Handling**: User-friendly error messages and validation
+- **Success Notifications**: Confirmation messages for completed actions
+- **Empty States**: Helpful guidance when no products exist
+
+### 🔧 Technical Features
+- **Progressive Enhancement**: Works without JavaScript (basic functionality)
+- **Local Storage**: Theme preferences saved between sessions
+- **System Integration**: Respects OS-level theme preferences
+- **Accessibility**: ARIA labels, keyboard navigation, screen reader friendly
+- **Performance**: Optimized loading and smooth animations
 
 ## Data Model
 

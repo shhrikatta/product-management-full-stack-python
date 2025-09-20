@@ -452,6 +452,7 @@ function closeDeleteModal() {
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.productManager = new ProductManager();
+    window.themeManager = new ThemeManager();
 });
 
 // Handle page refresh with unsaved changes
@@ -473,6 +474,80 @@ window.addEventListener('beforeunload', (e) => {
         e.returnValue = '';
     }
 });
+
+// Theme Management
+class ThemeManager {
+    constructor() {
+        this.currentTheme = 'light';
+        this.init();
+    }
+
+    init() {
+        // Check for saved theme preference or default to system preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        this.currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        this.applyTheme(this.currentTheme);
+        this.updateThemeToggle();
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                this.currentTheme = e.matches ? 'dark' : 'light';
+                this.applyTheme(this.currentTheme);
+                this.updateThemeToggle();
+            }
+        });
+    }
+
+    applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        this.currentTheme = theme;
+    }
+
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        this.applyTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+        this.updateThemeToggle();
+        
+        // Add a subtle animation effect
+        document.body.style.transition = 'none';
+        setTimeout(() => {
+            document.body.style.transition = '';
+        }, 50);
+    }
+
+    updateThemeToggle() {
+        const themeIcon = document.getElementById('theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        if (this.currentTheme === 'dark') {
+            themeIcon.className = 'fas fa-sun';
+            themeLabel.textContent = 'Light';
+            themeToggle.title = 'Switch to light theme';
+        } else {
+            themeIcon.className = 'fas fa-moon';
+            themeLabel.textContent = 'Dark';
+            themeToggle.title = 'Switch to dark theme';
+        }
+    }
+
+    getCurrentTheme() {
+        return this.currentTheme;
+    }
+
+    getSystemTheme() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+}
+
+// Global theme functions
+function toggleTheme() {
+    window.themeManager.toggleTheme();
+}
 
 // Service Worker Registration (for future PWA functionality)
 if ('serviceWorker' in navigator) {

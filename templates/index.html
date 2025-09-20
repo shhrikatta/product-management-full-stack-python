@@ -11,8 +11,18 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1><i class="fas fa-box"></i> Product Management System</h1>
-            <p>Manage your product inventory with ease</p>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1><i class="fas fa-box"></i> Product Management System</h1>
+                    <p>Manage your product inventory with ease</p>
+                </div>
+                <div class="header-controls">
+                    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light theme">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span class="theme-label" id="theme-label">Dark</span>
+                    </button>
+                </div>
+            </div>
         </header>
 
         <!-- Alert/Message Area -->
