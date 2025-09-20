@@ -1,11 +1,10 @@
 import random
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 import os
-
 
 # MongoDB Configuration
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb+srv://shhrikatta_db_user:FkHyvvUzwokaS8nl@charan-cluster-aws.idct1pl.mongodb.net/?retryWrites=true&w=majority&appName=charan-cluster-aws')
@@ -299,16 +298,27 @@ def delete_product(product_id):
         print(f"Error in delete_product: {e}")
         return jsonify({'error': 'Internal server error'}), 500
 
-@app.route('/', methods=['GET'])
+@app.route('/')
+def index():
+    """
+    Serve the web UI for product management
+    """
+    return render_template('index.html')
+
+@app.route('/health', methods=['GET'])
 def health_check():
     """
     Health check endpoint with API documentation
     """
     return jsonify({
         'message': 'Products API is running',
+        'status': 'healthy',
+        'database': 'connected' if products_collection is not None else 'disconnected',
         'endpoints': {
+            '/': 'GET - Web UI for product management',
             '/api/products': 'GET - Get all products (optional ?id=<id> for specific product), POST - Create new product',
-            '/api/products/<id>': 'PUT - Update product, DELETE - Delete product'
+            '/api/products/<id>': 'PUT - Update product, DELETE - Delete product',
+            '/health': 'GET - API health check'
         }
     })
 
@@ -345,15 +355,19 @@ if __name__ == "__main__":
             print(f"⚠️  Could not retrieve database statistics: {e}")
     else:
         print("⚠️  Database connection not available")
-    print("\nStarting Flask server on http://0.0.0.0:5001...")
-    print("Available endpoints:")
-    print("  GET    /                     - Health check")
-    print("  GET    /api/products         - Get all products")
-    print("  GET    /api/products?id=<id> - Get product by ID")
-    print("  POST   /api/products         - Create new product")
-    print("  PUT    /api/products/<id>    - Update product")
-    print("  DELETE /api/products/<id>    - Delete product")
+    print("\n🌐 Starting Flask server on http://0.0.0.0:5001...")
+    print("\n📋 Available endpoints:")
+    print("  🏠 Web UI:")
+    print("    GET    /                     - Product Management Web Interface")
+    print("    GET    /health               - API health check")
+    print("  🔗 API Endpoints:")
+    print("    GET    /api/products         - Get all products")
+    print("    GET    /api/products?id=<id> - Get product by ID")
+    print("    POST   /api/products         - Create new product")
+    print("    PUT    /api/products/<id>    - Update product")
+    print("    DELETE /api/products/<id>    - Delete product")
+    print("\n🎉 Ready! Open http://localhost:5001 in your browser to manage products.")
     print("-" * 50)
     
     # Run Flask app
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    app.run(debug=True, host='0.0.0.0', port=5002)
