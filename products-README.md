@@ -4,31 +4,82 @@ A RESTful Flask API for managing products with full CRUD (Create, Read, Update, 
 
 ## Overview
 
-The Products API is built using Flask and Flask-CORS, providing a simple yet robust backend for product management. It maintains an in-memory product list and offers JSON-based API endpoints for all operations.
+The Products API is built using Flask, Flask-CORS, and PyMongo, providing a robust backend for product management with persistent storage. It uses MongoDB as the database backend and offers JSON-based API endpoints for all operations. The API supports both MongoDB ObjectIds and custom integer IDs for maximum flexibility.
 
 ## Features
 
 - ✅ **Full CRUD Operations**: Create, Read, Update, and Delete products
+- ✅ **MongoDB Integration**: Persistent storage with MongoDB database
+- ✅ **Flexible ID Support**: Works with both MongoDB ObjectIds and custom integer IDs
 - ✅ **RESTful Design**: Clean, intuitive API endpoints
 - ✅ **Data Validation**: Comprehensive input validation and error handling
 - ✅ **CORS Support**: Cross-origin resource sharing enabled
 - ✅ **Health Check**: Built-in status endpoint
 - ✅ **JSON Responses**: All responses in JSON format
 - ✅ **Error Handling**: Proper HTTP status codes and error messages
+- ✅ **Environment Configuration**: Configurable via environment variables
+- ✅ **Connection Resilience**: Graceful handling of database connection issues
 
 ## Installation
 
-1. **Prerequisites**:
+### Prerequisites
+
+1. **Python Dependencies**:
    ```bash
-   pip install flask flask-cors
+   pip install flask flask-cors pymongo
    ```
 
-2. **Run the API**:
+2. **MongoDB Setup**:
+   
+   **Option A: Local MongoDB Installation**
    ```bash
-   python products.py
+   # macOS (using Homebrew)
+   brew install mongodb-community
+   brew services start mongodb-community
+   
+   # Ubuntu/Debian
+   sudo apt-get install mongodb
+   sudo systemctl start mongod
+   
+   # Windows - Download from https://www.mongodb.com/try/download/community
    ```
+   
+   **Option B: MongoDB Atlas (Cloud)**
+   1. Create a free account at [MongoDB Atlas](https://www.mongodb.com/atlas)
+   2. Create a new cluster
+   3. Get your connection string
+   4. Set the `MONGO_URI` environment variable
+   
+   **Option C: Docker**
+   ```bash
+   docker run -d -p 27017:27017 --name mongodb mongo:latest
+   ```
+
+### Configuration
+
+The API uses environment variables for configuration:
+
+```bash
+# Optional - defaults shown
+export MONGO_URI="mongodb://localhost:27017/"
+export DATABASE_NAME="products_db"
+export COLLECTION_NAME="products"
+```
+
+For MongoDB Atlas or remote instances:
+```bash
+export MONGO_URI="mongodb+srv://username:password@cluster.mongodb.net/"
+```
+
+### Running the API
+
+```bash
+python products.py
+```
 
 The server will start on `http://0.0.0.0:5001` with debug mode enabled.
+
+**Note**: The API will automatically create the database and collection if they don't exist.
 
 ## Data Model
 
@@ -45,10 +96,12 @@ Each product has the following structure:
 
 ### Field Descriptions
 
-- **id**: `integer` - Unique identifier (auto-generated)
+- **id**: `string` - Unique identifier (auto-generated integer, converted to string in responses)
 - **name**: `string` - Product name (required, non-empty)
 - **price**: `float` - Product price (required, non-negative)
 - **quantity**: `integer` - Stock quantity (required, non-negative)
+
+**Note**: The API uses MongoDB for storage. Products are stored with both a MongoDB `_id` (ObjectId) and a custom `id` field (integer). API responses use the custom `id` field for consistency, but both can be used for querying.
 
 ## API Endpoints
 
@@ -407,17 +460,38 @@ result = response.json()
 
 The API runs with the following default configuration:
 
+### Server Configuration
 - **Host**: `0.0.0.0` (accessible from all network interfaces)
 - **Port**: `5001`
 - **Debug Mode**: `True` (should be disabled in production)
 - **CORS**: Enabled for all domains
 
+### Database Configuration (Environment Variables)
+- **MONGO_URI**: `mongodb://localhost:27017/` (MongoDB connection string)
+- **DATABASE_NAME**: `products_db` (Database name)
+- **COLLECTION_NAME**: `products` (Collection name)
+
+### Example Environment Setup
+```bash
+# Local MongoDB
+export MONGO_URI="mongodb://localhost:27017/"
+
+# MongoDB Atlas
+export MONGO_URI="mongodb+srv://username:password@cluster.mongodb.net/"
+
+# Custom database/collection names
+export DATABASE_NAME="my_store_db"
+export COLLECTION_NAME="inventory"
+```
+
 ## Notes
 
-- **In-Memory Storage**: Products are stored in memory and will be lost when the server restarts
-- **ID Generation**: Product IDs are auto-generated sequentially
-- **Thread Safety**: This implementation is not thread-safe for concurrent operations
-- **Production Ready**: Consider using a persistent database and proper configuration for production use
+- **persistent Storage**: Products are stored in MongoDB and persist across server restarts
+- **ID Support**: Supports both MongoDB ObjectIds and custom integer IDs for queries
+- **Auto-Indexing**: MongoDB automatically creates indexes for efficient querying
+- **Connection Handling**: API gracefully handles database connection failures
+- **Data Consistency**: Uses MongoDB's ACID properties for data integrity
+- **Scalability**: MongoDB provides horizontal scaling capabilities for production use
 
 ## Development
 
@@ -433,9 +507,17 @@ For production deployment, consider:
 
 ## Dependencies
 
-- `Flask`: Web framework
+- `Flask`: Web framework for API endpoints
 - `Flask-CORS`: Cross-origin resource sharing support
-- `random`: For any random operations (imported but not actively used in current implementation)
+- `PyMongo`: MongoDB driver for Python
+- `MongoDB`: NoSQL database for persistent storage
+- `BSON`: Binary JSON format used by MongoDB
+
+### MongoDB Requirements
+
+- MongoDB Server 4.0+ (local installation, Atlas, or Docker)
+- Network connectivity to MongoDB instance
+- Sufficient disk space for data storage
 
 ---
 
