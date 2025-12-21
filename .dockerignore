@@ -1,0 +1,64 @@
+# Exclude version control
+.git
+.gitignore
+.github
+
+# Exclude Python cache and bytecode
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Exclude virtual environments
+venv/
+env/
+ENV/
+virtualenv/
+
+# Exclude test files and coverage reports
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+*.log
+
+# Exclude IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Exclude OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Exclude documentation (not needed in production)
+*.md
+!README.md
+WARP.md
+TEST_COVERAGE.md
+PROJECT_STRUCTURE.md
+CI_CD_IMPLEMENTATION.md
+
+# Exclude Docker files (prevent recursion)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Exclude development and build artifacts
+*.egg-info/
+dist/
+build/
+
+# Exclude configuration files not needed in container
+.coveragerc
+pytest.ini
