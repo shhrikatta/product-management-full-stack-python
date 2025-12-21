@@ -3,3 +3,4 @@ Flask-CORS==4.0.1
 pymongo==4.15.5
 pytest==7.4.4
 pytest-cov==4.1.0
+pytest-mock==3.15.1
