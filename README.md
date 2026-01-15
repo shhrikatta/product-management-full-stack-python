@@ -563,3 +563,10 @@ For production deployment, consider:
 **Author**: Generated from products.py  
 **Version**: 1.0  
 **Last Updated**: 2025-09-20
+
+## Project Screenshots
+
+![Jenkins Stages](images/1.jenkins-stages.png)
+![Jenkins Pipeline](images/2.jenkins-pipeline.png)
+![GitHub Actions Test Coverage](images/3.github-actions-test-coverage.png)
+![GitHub Actions Docker](images/4.github-actions-docker.png)
