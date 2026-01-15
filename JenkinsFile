@@ -1,0 +1,110 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "product-management-app"
+        DOCKER_TAG = "${BUILD_NUMBER}"
+        PYTHON_VERSION = "3.13"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code from GitHub...'
+                git branch: 'develop', url: 'https://github.com/shhrikatta/product-management-full-stack-python'
+                
+                script {
+                    // Get short commit hash for tagging
+                    env.GIT_COMMIT_SHORT = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
+                    echo "Checked out commit: ${env.GIT_COMMIT_SHORT}"
+                }
+            }
+        }
+
+        stage('Dependencies Installation') {
+            steps {
+                echo 'Installing Python dependencies...'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                    pip install pymongo
+                    echo "Dependencies installed successfully"
+                '''
+            }
+        }
+
+        stage('Run Unit Test Cases') {
+            steps {
+                echo 'Running unit tests with coverage...'
+                sh '''
+                    . venv/bin/activate
+                    pytest --cov --cov-report=xml --cov-report=html --cov-report=term
+                '''
+            }
+            post {
+                always {
+                    // Archive coverage reports
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'htmlcov',
+                        reportFiles: 'index.html',
+                        reportName: 'Coverage Report'
+                    ])
+                }
+                success {
+                    echo 'All unit tests passed!'
+                }
+                failure {
+                    echo 'Unit tests failed!'
+                    error('Stopping pipeline due to test failures')
+                }
+            }
+        }
+
+        stage('Dockerization') {
+            steps {
+                echo "Building Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                script {
+                    // Build Docker image
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    
+                    // Tag with multiple tags
+                    sh """
+                        docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
+                        docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:${GIT_COMMIT_SHORT}
+                    """
+                    
+                    echo "Docker image built and tagged successfully"
+                }
+            }
+            post {
+                success {
+                    echo "Docker images created:"
+                    echo "  - ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    echo "  - ${DOCKER_IMAGE}:latest"
+                    echo "  - ${DOCKER_IMAGE}:${GIT_COMMIT_SHORT}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            sh 'rm -rf venv'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs for details.'
+        }
+    }
+}
